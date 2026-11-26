@@ -1,0 +1,58 @@
+/* ==========================================================
+   Design tokens — Figma › ui正式版 › Frame (design system)
+   ========================================================== */
+/* Local font fallback: drop the .ttf files into assets/fonts to work offline */
+@font-face { font-family: "Bakbak One Local"; src: local("Bakbak One"), local("BakbakOne-Regular"), url("../assets/fonts/BakbakOne-Regular.ttf") format("truetype"); font-display: swap; }
+@font-face { font-family: "42dot Sans Local"; src: local("42dot Sans"), url("../assets/fonts/42dotSans-VariableFont_wght.ttf") format("truetype"); font-weight: 300 800; font-display: swap; }
+
+:root {
+  /* Primary color */
+  --c-deep-green: #134B45;
+  --c-sage: #85ABA0;
+  --c-lime: #D7ECB4;
+  --c-peach: #FCBF93;
+  --c-cream: #F2E8DF;
+
+  /* Secondary color */
+  --c-gray: #676767;
+  --c-light-gray: #D0D0D0;
+  --c-yellow: #FFF78C;
+  --c-pale-yellow: #FFFCD1;
+
+  /* Tones measured from UI frames */
+  --c-ink: #53524E;
+  --c-sub-text: #767676;
+  --c-card-text: #786C64;
+  --c-card-icon: #DDD1C6;
+  --c-beige-card: #F1E7DE;
+  --c-pill-green: #1B524C;
+  --c-share-green: #84AA9F;
+  --c-note-green: #93B6A3;
+  --c-calendar-green: #B1CBBB;
+  --c-peach-text: #FFB27A;
+  --c-tip-gray: #A4A4A4;
+  --c-track: #D9D9D9;
+  --c-jar-stroke: #8D8A8A;
+  --c-jar-fill: #F4EBDD;
+  --c-got-it: #8D8A8A;
+  --c-poop-red: #FF6D6D;
+  --c-poop-cyan: #CDFFFC;
+  --c-splash: #FFFAF5;
+  --c-likes-active: #8EAE9E;
+  --c-action-lime: #D9EAB9;
+  --c-toilet: #9A9A9A;
+
+  /* Typography */
+  --f-title: "Bakbak One", "Bakbak One Local", "Arial Rounded MT Bold", system-ui, sans-serif;
+  --f-body: "42dot Sans", "42dot Sans Local", -apple-system, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif;
+
+  /* Shape & spacing */
+  --radius: 15px;
+  --h-margin: 25px;
+
+  /* Device (iPhone 18 Pro) */
+  --design-w: 402px;
+  --design-h: 874px;
+  --design-safe-top: 62px;
+  --design-safe-bottom: 34px;
+}

@@ -1,0 +1,123 @@
+/* ==========================================================
+   Base + device stage + safe area
+   ========================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: #EDEDED;
+  font-family: var(--f-body);
+  color: var(--c-ink);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+button:focus-visible { outline: 2px solid var(--c-sage); outline-offset: 2px; }
+img { display: block; user-select: none; -webkit-user-drag: none; }
+
+.device {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+/* Desktop: iPhone 18 Pro frame with simulated safe areas */
+.phone {
+  --safe-top: var(--design-safe-top);
+  --safe-bottom: var(--design-safe-bottom);
+  position: relative;
+  width: var(--design-w);
+  height: var(--design-h);
+  background: #fff;
+  border-radius: 56px;
+  overflow: hidden;
+  box-shadow: 0 0 0 10px #1d1d1f, 0 0 0 12px #3a3a3c, 0 30px 80px rgba(0, 0, 0, .35);
+  isolation: isolate;
+}
+
+.island {
+  position: absolute;
+  top: 11px;
+  left: 50%;
+  width: 124px;
+  height: 36px;
+  margin-left: -62px;
+  border-radius: 20px;
+  background: #000;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.app { position: absolute; inset: 0; }
+#overlay-root { position: absolute; inset: 0; pointer-events: none; z-index: 50; }
+#overlay-root > * { pointer-events: auto; }
+
+/* Mobile: real device, real safe areas */
+@media (max-width: 500px) {
+  html, body { background: #fff; }
+  .device { padding: 0; display: block; }
+  .phone {
+    --safe-top: max(env(safe-area-inset-top), 20px);
+    --safe-bottom: max(env(safe-area-inset-bottom), 12px);
+    width: 100vw;
+    height: 100dvh;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .island { display: none; }
+}
+
+/* Utility: free-form layer positioned with design coordinates.
+   Use style="--x:..px; --y:..px" — y is measured from the top of the 874pt frame
+   and re-anchored to the current safe area. */
+.stage {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: var(--design-w);
+  margin-left: calc(var(--design-w) / -2);
+}
+.at {
+  position: absolute;
+  left: var(--x, 0px);
+  top: calc(var(--safe-top) - var(--design-safe-top) + var(--y, 0px));
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  overflow: hidden;
+}
+.screen--scroll {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.screen--scroll::-webkit-scrollbar { display: none; }
+.safe-top { padding-top: var(--safe-top); }
+.safe-bottom { padding-bottom: var(--safe-bottom); }
+
+/* Screen transitions */
+.screen.enter-forward { animation: enterForward .38s cubic-bezier(.2, .8, .2, 1); }
+.screen.enter-back { animation: enterBack .38s cubic-bezier(.2, .8, .2, 1); }
+.screen.enter-fade { animation: fadeIn .4s ease; }
+@keyframes enterForward { from { transform: translateX(30%); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes enterBack { from { transform: translateX(-30%); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);
+}
