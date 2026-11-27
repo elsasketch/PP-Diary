@@ -41,7 +41,7 @@ PP.state = (function () {
       nicknameSet: false,          // false → ask for a nickname on first launch
       me: {
         id: "elsa", name: "Pooper", title: "Healthy Player",
-        instagram: "y_m_c.0904", lineID: "04878787", liked: false
+        instagram: "", lineID: "", liked: false   // each user fills in their own
       },
       users: {
         cc: {
@@ -67,6 +67,9 @@ PP.state = (function () {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     data = raw ? Object.assign(defaults(), JSON.parse(raw)) : defaults();
+    // Earlier versions saved the designer's own IG / LINE into everyone's profile: clear them.
+    if (data.me.instagram === "y_m_c.0904") data.me.instagram = "";
+    if (data.me.lineID === "04878787") data.me.lineID = "";
     // Remove the old placeholder drawing from the user's own jar.
     data.posts = (data.posts || []).filter((p) => !(p.authorID === data.me.id && p.artwork === "illus_character"));
     // Older saves kept the name in `displayName`: move it onto the profile.
@@ -100,6 +103,13 @@ PP.state = (function () {
 
     /** This device's nickname. Stored only in this browser, so every user has their own. */
     get nickname() { return data.me.name; },
+    /** Save this user's own profile fields (nickname, IG, LINE ID). */
+    setProfile({ name, instagram, lineID }) {
+      if (name) { data.me.name = name; data.nicknameSet = true; }
+      data.me.instagram = instagram || "";
+      data.me.lineID = lineID || "";
+      save();
+    },
     setNickname(name) {
       data.me.name = name;
       data.nicknameSet = true;

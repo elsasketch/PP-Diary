@@ -18,7 +18,7 @@ PP.screens.profile = function (route) {
         <div class="profile__info">
           <h1>${esc(user.name)}</h1>
           <p class="profile__title">${esc(user.title)}</p>
-          <p class="profile__meta">ig : ${esc(user.instagram)}<br>line ID : ${esc(user.lineID)}</p>
+          <p class="profile__meta"></p>
         </div>
         <button class="profile__plus pressable" data-action="plus" aria-label="add">${I.plusThin}</button>
       </div>
@@ -39,6 +39,16 @@ PP.screens.profile = function (route) {
       jarPosts(S.data.posts.filter((p) => p.authorID === userID), { selectedId: selected }));
   }
 
+  function renderMeta() {
+    const lines = [];
+    if (user.instagram) lines.push(`ig : ${esc(user.instagram)}`);
+    if (user.lineID) lines.push(`line ID : ${esc(user.lineID)}`);
+    const meta = el.querySelector(".profile__meta");
+    if (lines.length) meta.innerHTML = lines.join("<br>");
+    else meta.innerHTML = isMe ? `<span class="profile__meta-empty">add your ig / line ID in edit</span>` : "";
+    el.querySelector(".profile__info h1").textContent = user.name;
+  }
+
   function renderHead() {
     const main = el.querySelector(".profile__main");
     if (isMe) main.innerHTML = `${I.pencil}<span>edit personal profile</span>`;
@@ -50,6 +60,7 @@ PP.screens.profile = function (route) {
     likes.querySelector(".likes-icon").innerHTML = user.liked ? I.heartFill : I.heart;
   }
 
+  renderMeta();
   renderHead();
   renderPosts();
 
@@ -70,10 +81,11 @@ PP.screens.profile = function (route) {
         break;
       case "main":
         if (isMe) {
-          PP.ui.nicknamePopup(S.nickname, (name) => {
-            S.setNickname(name);
-            el.querySelector(".profile__info h1").textContent = name;
-            PP.ui.toast("Nickname saved");
+          PP.ui.profilePopup(S.data.me, (values) => {
+            S.setProfile(values);
+            renderMeta();
+            renderPosts();
+            PP.ui.toast("Profile saved");
           });
         } else if (user.isFriend) {
           PP.ui.unfriendPopup(() => { user.isFriend = false; S.save(); renderHead(); });

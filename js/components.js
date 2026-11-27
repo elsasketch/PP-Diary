@@ -191,6 +191,41 @@ PP.ui = (function () {
     return p;
   }
 
+  /** Edit own profile: nickname + IG + LINE ID (IG and LINE are optional). */
+  function profilePopup(me, onSave) {
+    const p = popup(`
+      <form class="nick nick--profile" novalidate>
+        <h2>Edit profile</h2>
+        <label class="nick__label">nickname
+          <input class="nick__input" name="name" maxlength="20" autocomplete="nickname" value="${esc(me.name || "")}" placeholder="e.g. Poopoo Queen"></label>
+        <label class="nick__label">ig
+          <input class="nick__input" name="instagram" maxlength="31" autocapitalize="off" autocorrect="off" spellcheck="false"
+            value="${esc(me.instagram || "")}" placeholder="your_ig (optional)"></label>
+        <label class="nick__label">line ID
+          <input class="nick__input" name="lineID" maxlength="20" autocapitalize="off" autocorrect="off" spellcheck="false"
+            value="${esc(me.lineID || "")}" placeholder="optional"></label>
+        <p class="nick__err" aria-live="polite"></p>
+        <button class="glass glass--sage pressable unfriend__yes" type="submit">SAVE</button>
+      </form>`);
+    const form = p.node.querySelector("form");
+    const err = form.querySelector(".nick__err");
+    form.addEventListener("input", () => { err.textContent = ""; });
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const name = form.name.value.replace(/\s+/g, " ").trim();
+      const instagram = form.instagram.value.trim().replace(/^@+/, "");
+      const lineID = form.lineID.value.trim();
+      if (!name) { err.textContent = "Please type a nickname"; form.name.focus(); return; }
+      if (instagram && !/^[A-Za-z0-9._]{1,30}$/.test(instagram)) {
+        err.textContent = "ig can only use letters, numbers, . and _"; form.instagram.focus(); return;
+      }
+      if (/\s/.test(lineID)) { err.textContent = "line ID can't have spaces"; form.lineID.focus(); return; }
+      onSave({ name, instagram, lineID });
+      p.close();
+    });
+    return p;
+  }
+
   /** YES / NO popup (same look as Unfriend). */
   function confirmPopup(title, onYes) {
     const p = popup(`
@@ -257,6 +292,6 @@ PP.ui = (function () {
 
   return {
     h, esc, img, poop, circleBtn, topbar, bindTopbar, qHeader, stepNav, jar, postLabel, actionPill, jarPosts,
-    popup, sharePopup, unfriendPopup, confirmPopup, nicknamePopup, openMenu, confetti, toast, haptic
+    popup, sharePopup, unfriendPopup, confirmPopup, nicknamePopup, profilePopup, openMenu, confetti, toast, haptic
   };
 })();
